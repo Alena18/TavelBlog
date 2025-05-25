@@ -1,0 +1,33 @@
+DROP TABLE IF EXISTS travel_logs, journey_plans, users;
+
+CREATE TABLE users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(255) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL,
+  email VARCHAR(255),
+  address VARCHAR(255)
+);
+
+CREATE TABLE journey_plans (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  name VARCHAR(255) NOT NULL,
+  locations JSON NOT NULL,
+  startDate DATE NOT NULL,
+  endDate DATE NOT NULL,
+  activities JSON NOT NULL,
+  description TEXT NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE travel_logs (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  title VARCHAR(255) NOT NULL,
+  description TEXT NOT NULL,
+  startDate DATE NOT NULL,
+  endDate DATE NOT NULL,
+  postDate DATE NOT NULL DEFAULT (CURRENT_DATE),
+  tags JSON,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);

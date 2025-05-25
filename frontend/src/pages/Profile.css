@@ -1,0 +1,251 @@
+.profile-wrapper {
+    max-width: 100%;
+    padding: 0 20px;
+    text-align: center;
+  }
+  
+  .subtext {
+    font-size: 1rem;
+    color: #444;
+    margin: 2px 0;
+  }
+  
+  .profile-tables {
+    margin-top: 40px;
+    overflow-x: auto;
+  }
+  
+  .form-table {
+    width: 95%;
+    margin: 0 auto;
+    border-collapse: separate;
+    border-spacing: 0;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.03);
+    font-size: 0.95rem;
+  }
+  
+  /* Header styling */
+  .form-table thead th {
+    background-color: #f0e6ff;
+    color: #5c2ebc;
+    font-weight: 600;
+    padding: 12px;
+    border: 1px solid #9358d1;
+    text-align: center;
+  }
+  
+  /* Cell styling */
+  .form-table td {
+    background-color: #f9f5ff;
+    border: 1px solid #ede3ff;
+    padding: 12px;
+  }
+
+ /* Divider cell */
+  .divider-cell {
+    width: 20px;
+    background-color: #eee4ff;
+    border-left: 2px solid #7240dc;
+    border-right: 2px solid #7240dc;
+  }
+  
+  .center-signout {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+  }
+  
+  .logout-btn {
+    background-color: #5400b0;
+    color: white;
+    padding: 12px 28px;
+    font-weight: 600;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+  }
+  
+  .logout-btn:hover {
+    background-color: #9358d1;
+    border: none;
+    outline: none;
+  }
+
+  /* Container around search and sort */
+.search-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin: 30px 0;
+  flex-wrap: wrap;
+}
+
+/* Input + icon wrapper */
+.search-wrapper {
+  position: relative;
+  width: fit-content;
+}
+
+.search-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #5c2ebc;
+  font-size: 1.2rem;
+  pointer-events: none; /* so the icon doesn't block input clicks */
+}
+
+.search-container {
+  display: flex;
+  flex-direction: column; /* Stack vertically */
+  align-items: center;     /* Center items horizontally */
+  gap: 12px;
+  margin: 30px 0;
+}
+
+.search-input {
+  padding: 10px 36px 10px 12px;
+  border: 1px solid #d9c6ff;
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: #fdf9ff;
+  color: #333;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  transition: 0.2s;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #a875ff;
+  box-shadow: 0 0 0 2px #e5d8ff;
+}
+
+/* Sort controls */
+.sort-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1rem;
+  color: #333;
+}
+
+.sort-controls select {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #d9c6ff;
+  background-color: #fdf9ff;
+  font-size: 1rem;
+  color: #5c2ebc;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.sort-controls select:focus {
+  outline: none;
+  border-color: #a875ff;
+}
+
+.clickable-row {
+  cursor: pointer;
+}
+.clickable-row:hover {
+  background-color: #f3ecff;
+}
+
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  width: 500px;
+  max-width: 90%;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+.modal-actions {
+  margin-top: 1rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 42px;
+  height: 24px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #5400b0;
+  border-radius: 24px;
+  transition: 0.3s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.3s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #c19bff;
+}
+
+input:checked + .slider:before {
+  transform: translateX(18px);
+}
+
+.toggle-switch {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.toggle-label {
+  font-weight: bold;
+  font-family: 'Niconne', cursive;
+  font-size: 2.5rem;
+  color: #5400b0;
+  line-height: 1;
+}
+
+.toggle-switch {
+  display: flex;
+  align-items: center;        /* centers vertically */
+  justify-content: center;    /* centers horizontally */
+  gap: 12px;
+  margin: 30px 0 10px 0;
+}
