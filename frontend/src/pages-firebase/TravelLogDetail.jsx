@@ -1,13 +1,13 @@
 import React, { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import useTravelLogs from "../hooks/useTravelLogs";
+import useTravelLogs from "../hooks-firebase/useTravelLogs";
 import TravelLogDetailLayout from "../hooks/TravelLogDetailLayout";
 
-export default function TravelLogDetail() {
+export default function TravelLogDetailFirebase() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const { log, setLog, handleChange, saveLog, deleteLog, fetchLogs } =
+  const { log, handleChange, saveLog, deleteLog, fetchLogs } =
     useTravelLogs(id);
 
   useEffect(() => {

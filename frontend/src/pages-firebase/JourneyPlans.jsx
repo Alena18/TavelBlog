@@ -1,5 +1,5 @@
 import React from "react";
-import useJourneyPlans from "../hooks/useJourneyPlans";
+import useJourneyPlans from "../hooks-firebase/useJourneyPlans";
 import { formatDateDMY } from "../hooks/formatDate";
 import JourneyPlansLayout from "../hooks/JourneyPlansLayout";
 
