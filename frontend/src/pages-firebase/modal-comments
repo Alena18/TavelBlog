@@ -1,0 +1,138 @@
+//   {/* Travel Log Modal */}
+//   {selectedLog && (
+//     <div className="modal-overlay">
+//       <form className="add-form">
+//         <h3 style={{ gridColumn: "1 / -1" }}>Edit Travel Log</h3>
+//         <input
+//           name="title"
+//           value={log.title}
+//           onChange={(e) => setLog({ ...log, title: e.target.value })}
+//           placeholder="Title"
+//         />
+//         <textarea
+//           name="description"
+//           value={log.description}
+//           onChange={(e) => setLog({ ...log, description: e.target.value })}
+//           placeholder="Description"
+//         />
+//         <input
+//           type="date"
+//           name="startDate"
+//           value={log.startDate}
+//           onChange={(e) => setLog({ ...log, startDate: e.target.value })}
+//         />
+//         <input
+//           type="date"
+//           name="endDate"
+//           value={log.endDate}
+//           onChange={(e) => setLog({ ...log, endDate: e.target.value })}
+//         />
+//         <input
+//           name="tags"
+//           value={log.tags}
+//           onChange={(e) => setLog({ ...log, tags: e.target.value })}
+//           placeholder="Tags"
+//         />
+//         <div className="modal-actions" style={{ gridColumn: "1 / -1" }}>
+//           <button
+//             type="button"
+//             onClick={() => saveLog(log.id, () => setSelectedLog(null))}
+//           >
+//             <FaCheck />
+//           </button>
+//           <button type="button" onClick={() => setSelectedLog(null)}>
+//             <FaTimes />
+//           </button>
+//           <button
+//             type="button"
+//             onClick={() => deleteLog(log.id, () => setSelectedLog(null))}
+//           >
+//             <FaTrash />
+//           </button>
+//         </div>
+//       </form>
+//     </div>
+//   )}
+
+{
+  /* Journey Plan Modal */
+}
+{
+  /* {selectedPlan && (
+        <div className="modal-overlay">
+          <form className="add-form">
+            <h3 style={{ gridColumn: "1 / -1" }}>Edit Journey Plan</h3>
+            <input
+              name="name"
+              value={editedPlan.name || ""}
+              onChange={handleEditChange}
+              placeholder="Name"
+            />
+            <input
+              name="locations"
+              value={editedPlan.locations || ""}
+              onChange={handleEditChange}
+              placeholder="Locations"
+            />
+            <input
+              type="date"
+              name="startDate"
+              value={editedPlan.startDate || ""}
+              onChange={handleEditChange}
+            />
+            <input
+              type="date"
+              name="endDate"
+              value={editedPlan.endDate || ""}
+              onChange={handleEditChange}
+            />
+            <textarea
+              name="activities"
+              value={
+                Array.isArray(editedPlan.activities)
+                  ? editedPlan.activities.join(", ")
+                  : editedPlan.activities || ""
+              }
+              onChange={(e) =>
+                handleEditChange({
+                  target: {
+                    name: "activities",
+                    value: e.target.value.split(",").map((a) => a.trim()),
+                  },
+                })
+              }
+              placeholder="Activities"
+            />
+            <textarea
+              name="description"
+              value={editedPlan.description || ""}
+              onChange={handleEditChange}
+              placeholder="Description"
+            />
+            <div className="modal-actions" style={{ gridColumn: "1 / -1" }}>
+              <button
+                type="button"
+                onClick={() => {
+                  saveEdit(selectedPlan.id);
+                  setSelectedPlan(null);
+                }}
+              >
+                <FaCheck />
+              </button>
+              <button type="button" onClick={() => setSelectedPlan(null)}>
+                <FaTimes />
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  deletePlan(selectedPlan.id);
+                  setSelectedPlan(null);
+                }}
+              >
+                <FaTrash />
+              </button>
+            </div>
+          </form>
+        </div>
+      )} */
+}

@@ -1,4 +1,3 @@
-// src/hooks/useJourneyPlans.js
 import { useEffect, useState } from "react";
 import {
   collection,
@@ -9,6 +8,14 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { db } from "../firebaseConfig"; // make sure your Firebase setup is correct
+
+const capitalizeWords = (str) => {
+  return str
+    .toLowerCase()
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+};
 
 const useJourneyPlans = () => {
   const [plans, setPlans] = useState([]);
@@ -24,16 +31,16 @@ const useJourneyPlans = () => {
   const [editedPlan, setEditedPlan] = useState({});
 
   const activityOptions = [
-    { value: "Hiking", label: "🏞 Hiking" },
-    { value: "Beach", label: "🏖 Beach" },
-    { value: "Food Tour", label: "🍲 Food Tour" },
-    { value: "Shopping", label: "🛍 Shopping" },
-    { value: "Culture", label: "🕌 Culture" },
-    { value: "Photography", label: "📸 Photography" },
-    { value: "Biking", label: "🚴 Biking" },
-    { value: "Fishing", label: "🎣 Fishing" },
-    { value: "Climbing", label: "🧗 Climbing" },
-    { value: "Nightlife", label: "🎉 Nightlife" },
+    { value: "Hiking", label: "\ud83c\udfdc Hiking" },
+    { value: "Beach", label: "\ud83c\udfd6 Beach" },
+    { value: "Food Tour", label: "\ud83c\udf72 Food Tour" },
+    { value: "Shopping", label: "\ud83c\udfe6 Shopping" },
+    { value: "Culture", label: "\ud83c\udfdb Culture" },
+    { value: "Photography", label: "\ud83d\udcf8 Photography" },
+    { value: "Biking", label: "\ud83d\udeb4 Biking" },
+    { value: "Fishing", label: "\ud83c\udfa3 Fishing" },
+    { value: "Climbing", label: "\ud83e\uddf7 Climbing" },
+    { value: "Nightlife", label: "\ud83c\udf89 Nightlife" },
   ];
 
   const fetchPlans = async () => {
@@ -70,9 +77,11 @@ const useJourneyPlans = () => {
     try {
       const formatted = {
         ...newPlan,
+        name: capitalizeWords(newPlan.name),
+        description: capitalizeWords(newPlan.description),
         locations: newPlan.locations
           .split(",")
-          .map((l) => l.trim())
+          .map((l) => capitalizeWords(l.trim()))
           .filter(Boolean),
       };
 
@@ -108,9 +117,11 @@ const useJourneyPlans = () => {
     try {
       const updatedPlan = {
         ...editedPlan,
+        name: capitalizeWords(editedPlan.name),
+        description: capitalizeWords(editedPlan.description),
         locations: editedPlan.locations
           .split(",")
-          .map((l) => l.trim())
+          .map((l) => capitalizeWords(l.trim()))
           .filter(Boolean),
       };
 

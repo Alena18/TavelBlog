@@ -1,25 +1,29 @@
-// Profile.jsx
-import React from "react";
-
-import { useEffect, useState } from "react";
-import "./Profile.css";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "../pages/Profile.css";
 import "../App.css";
-import { FiSearch } from "react-icons/fi";
+import { FiSearch, FiEdit3 } from "react-icons/fi";
 import { FaCheck, FaTimes, FaTrash } from "react-icons/fa";
 import useTravelLogs from "../hooks/useTravelLogs";
 import useJourneyPlans from "../hooks/useJourneyPlans";
 import { formatDateDMY } from "../hooks/formatDate";
+import { auth, db } from "../firebaseConfig";
+import { onAuthStateChanged } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
+import { signOut } from "firebase/auth";
 
 function Profile() {
+  const navigate = useNavigate();
+
   const [user, setUser] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("name");
-  const [selectedLog, setSelectedLog] = useState(null);
-  const [selectedPlan, setSelectedPlan] = useState(null);
   const [showLogs, setShowLogs] = useState(true);
 
-  const { logs, log, setLog, saveLog, deleteLog } = useTravelLogs();
+  const [selectedLog, setSelectedLog] = useState(null);
+  const [selectedPlan, setSelectedPlan] = useState(null);
 
+  const { logs, log, setLog, saveLog, deleteLog } = useTravelLogs();
   const {
     plans,
     editedPlan,
@@ -35,10 +39,27 @@ function Profile() {
   const [filteredPlans, setFilteredPlans] = useState([]);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("userInfo");
-    if (!storedUser) return;
-    const parsed = JSON.parse(storedUser);
-    setUser(parsed);
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (currentUser) {
+        const docRef = doc(db, "users", currentUser.uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setUser({
+            uid: currentUser.uid,
+            email: currentUser.email,
+            ...docSnap.data(),
+          });
+        } else {
+          setUser({
+            uid: currentUser.uid,
+            email: currentUser.email,
+          });
+        }
+      } else {
+        setUser(null);
+      }
+    });
+    return () => unsubscribe();
   }, []);
 
   useEffect(() => {
@@ -55,9 +76,8 @@ function Profile() {
       logsFiltered = logsFiltered.filter(
         (log) =>
           log.title?.toLowerCase().includes(term) ||
-          log.tags?.toLowerCase().includes(term) // <-- also search in tags
+          log.tags?.toLowerCase().includes(term)
       );
-
       plansFiltered = plansFiltered.filter((plan) =>
         plan.name.toLowerCase().includes(term)
       );
@@ -79,24 +99,21 @@ function Profile() {
     setFilteredPlans(plansFiltered);
   }, [searchTerm, sortBy, logs, plans]);
 
-  const handleLogout = () => {
-    localStorage.removeItem("userInfo");
+  const handleLogout = async () => {
+    await signOut(auth);
     window.location.href = "/";
   };
 
-  const openLogModal = (log) => {
-    const cleanedTags = log.tags
-      ?.split(",")
-      .map((tag) => tag.replace(/^#/, "").trim())
-      .join(", ");
+  const handlePlanRowClick = (planId) => {
+    navigate(`/travelplandetails/${planId}`);
+  };
 
+  const openLogModal = (log) => {
     setLog({
       ...log,
       startDate: log.startDate?.split("T")[0],
       endDate: log.endDate?.split("T")[0],
-      tags: cleanedTags,
     });
-
     setSelectedLog(log);
   };
 
@@ -113,7 +130,6 @@ function Profile() {
       <p className="subtext">Email: {user.email}</p>
       <p className="subtext">Address: {user.address}</p>
 
-      {/* Search & sort */}
       <div className="search-container">
         <div className="search-wrapper">
           <input
@@ -134,7 +150,6 @@ function Profile() {
         </div>
       </div>
 
-      {/* Toggle */}
       <div className="toggle-switch">
         <label className="switch">
           <input
@@ -145,24 +160,14 @@ function Profile() {
           <span className="slider"></span>
         </label>
         <span className="toggle-label">
-          {showLogs ? "Travel Logs" : "Journey Plans"}
+          {showLogs ? "Journey Plans" : "Travel Logs"}
         </span>
       </div>
 
-      {/* Table View */}
       <div className="profile-tables">
         <table className="form-table">
           <thead>
             {showLogs ? (
-              <tr>
-                <th>Title</th>
-                <th>Description</th>
-                <th>Start</th>
-                <th>End</th>
-                <th>Tags</th>
-                <th>Posted</th>
-              </tr>
-            ) : (
               <tr>
                 <th>Name</th>
                 <th>Locations</th>
@@ -170,66 +175,104 @@ function Profile() {
                 <th>End</th>
                 <th>Activities</th>
                 <th>Description</th>
+                <th>Budget Total</th>
+                <th>Manage</th>
+              </tr>
+            ) : (
+              <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Start</th>
+                <th>End</th>
+                <th>Tags</th>
+                <th>Posted</th>
+                <th>Manage</th>
               </tr>
             )}
           </thead>
           <tbody>
             {showLogs
-              ? filteredLogs.map((log, i) => (
-                  <tr
-                    key={i}
-                    className="clickable-row"
-                    onClick={() => openLogModal(log)}
-                  >
-                    <td>{log.title}</td>
-                    <td>{log.description}</td>
-                    <td>{formatDateDMY(log.startDate)}</td>
-                    <td>{formatDateDMY(log.endDate)}</td>
-                    <td>
-                      {(() => {
-                        try {
-                          const parsed = JSON.parse(log.tags);
-                          const tagsArray = Array.isArray(parsed)
-                            ? parsed
-                            : log.tags.split(",");
-                          return tagsArray
-                            .map(
-                              (tag) => `#${tag.replace(/["'#]/g, "").trim()}`
-                            )
-                            .join(" ");
-                        } catch {
-                          return log.tags
-                            ?.split(",")
-                            .map(
-                              (tag) => `#${tag.replace(/["'#]/g, "").trim()}`
-                            )
-                            .join(" ");
-                        }
-                      })()}
+              ? filteredPlans.map((plan) => (
+                  <tr key={plan.id}>
+                    <td onClick={() => handlePlanRowClick(plan.id)}>
+                      {plan.name}
                     </td>
-                    <td>{formatDateDMY(log.postDate)}</td> {/* Add this */}
-                  </tr>
-                ))
-              : filteredPlans.map((plan, i) => (
-                  <tr
-                    key={i}
-                    className="clickable-row"
-                    onClick={() => openPlanModal(plan)}
-                  >
-                    <td>{plan.name}</td>
-                    <td>
+                    <td onClick={() => handlePlanRowClick(plan.id)}>
                       {Array.isArray(plan.locations)
                         ? plan.locations.join(", ")
                         : plan.locations}
                     </td>
-                    <td>{formatDateDMY(plan.startDate)}</td>
-                    <td>{formatDateDMY(plan.endDate)}</td>
-                    <td>
+                    <td onClick={() => handlePlanRowClick(plan.id)}>
+                      {formatDateDMY(plan.startDate)}
+                    </td>
+                    <td onClick={() => handlePlanRowClick(plan.id)}>
+                      {formatDateDMY(plan.endDate)}
+                    </td>
+                    <td onClick={() => handlePlanRowClick(plan.id)}>
                       {Array.isArray(plan.activities)
                         ? plan.activities.join(", ")
                         : plan.activities}
                     </td>
-                    <td>{plan.description}</td>
+                    <td onClick={() => handlePlanRowClick(plan.id)}>
+                      {plan.description}
+                    </td>
+                    <td onClick={() => handlePlanRowClick(plan.id)}>€0.00</td>
+                    <td>
+                      <div className="action-buttons">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            openPlanModal(plan);
+                          }}
+                        >
+                          <FiEdit3 />
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deletePlan(plan.id);
+                          }}
+                        >
+                          <FaTrash color="white" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              : filteredLogs.map((log) => (
+                  <tr key={log.id}>
+                    <td onClick={() => openLogModal(log)}>{log.title}</td>
+                    <td onClick={() => openLogModal(log)}>{log.description}</td>
+                    <td onClick={() => openLogModal(log)}>
+                      {formatDateDMY(log.startDate)}
+                    </td>
+                    <td onClick={() => openLogModal(log)}>
+                      {formatDateDMY(log.endDate)}
+                    </td>
+                    <td onClick={() => openLogModal(log)}>{log.tags}</td>
+                    <td onClick={() => openLogModal(log)}>
+                      {formatDateDMY(log.postDate)}
+                    </td>
+                    <td>
+                      <div className="action-buttons">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            openLogModal(log);
+                          }}
+                        >
+                          <FiEdit3 />
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteLog(log.id);
+                          }}
+                        >
+                          <FaTrash color="white" />
+                        </button>
+                      </div>
+                    </td>
                   </tr>
                 ))}
           </tbody>
@@ -246,18 +289,16 @@ function Profile() {
       {selectedLog && (
         <div className="modal-overlay">
           <form className="add-form">
-            <h3 style={{ gridColumn: "1 / -1" }}>Edit Travel Log</h3>
+            <h3>Edit Travel Log</h3>
             <input
               name="title"
               value={log.title}
               onChange={(e) => setLog({ ...log, title: e.target.value })}
-              placeholder="Title"
             />
             <textarea
               name="description"
               value={log.description}
               onChange={(e) => setLog({ ...log, description: e.target.value })}
-              placeholder="Description"
             />
             <input
               type="date"
@@ -275,12 +316,13 @@ function Profile() {
               name="tags"
               value={log.tags}
               onChange={(e) => setLog({ ...log, tags: e.target.value })}
-              placeholder="Tags"
             />
-            <div className="modal-actions" style={{ gridColumn: "1 / -1" }}>
+            <div className="modal-actions">
               <button
                 type="button"
-                onClick={() => saveLog(log.id, () => setSelectedLog(null))}
+                onClick={() => {
+                  saveLog(log.id, () => setSelectedLog(null));
+                }}
               >
                 <FaCheck />
               </button>
@@ -289,7 +331,9 @@ function Profile() {
               </button>
               <button
                 type="button"
-                onClick={() => deleteLog(log.id, () => setSelectedLog(null))}
+                onClick={() => {
+                  deleteLog(log.id, () => setSelectedLog(null));
+                }}
               >
                 <FaTrash />
               </button>
@@ -302,18 +346,16 @@ function Profile() {
       {selectedPlan && (
         <div className="modal-overlay">
           <form className="add-form">
-            <h3 style={{ gridColumn: "1 / -1" }}>Edit Journey Plan</h3>
+            <h3>Edit Journey Plan</h3>
             <input
               name="name"
               value={editedPlan.name || ""}
               onChange={handleEditChange}
-              placeholder="Name"
             />
             <input
               name="locations"
               value={editedPlan.locations || ""}
               onChange={handleEditChange}
-              placeholder="Locations"
             />
             <input
               type="date"
@@ -342,15 +384,13 @@ function Profile() {
                   },
                 })
               }
-              placeholder="Activities"
             />
             <textarea
               name="description"
               value={editedPlan.description || ""}
               onChange={handleEditChange}
-              placeholder="Description"
             />
-            <div className="modal-actions" style={{ gridColumn: "1 / -1" }}>
+            <div className="modal-actions">
               <button
                 type="button"
                 onClick={() => {

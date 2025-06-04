@@ -1,13 +1,5 @@
 import "./App.css";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-// import NavBar from "./pages/NavBar";
-// import Login from "./pages/Login";
-// import Plans from "./pages/JourneyPlans";
-// import TravelLog from "./pages/TravelLog";
-// import TravelLogDetail from "./pages/TravelLogDetail";
-// import Home from "./pages/Home";
-// import Profile from "./pages/Profile";
-// import ProtectedRoute from "./pages/ProtectedRoute";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import NavBar from "./pages-firebase/NavBar";
 import Login from "./pages-firebase/Login";
 import Plans from "./pages-firebase/JourneyPlans";
@@ -15,7 +7,12 @@ import TravelLog from "./pages-firebase/TravelLog";
 import TravelLogDetail from "./pages-firebase/TravelLogDetail";
 import Home from "./pages-firebase/Home";
 import Profile from "./pages-firebase/Profile";
+import TravelPlanDetails from "./pages-firebase/TravelPlanDetails";
+import PlacesMapPage from "./pages-firebase/PlacesMapPage";
 import ProtectedRoute from "./pages-firebase/ProtectedRoute";
+import "leaflet/dist/leaflet.css";
+import Modal from "react-modal";
+Modal.setAppElement("#root");
 
 function App() {
   return (
@@ -23,10 +20,12 @@ function App() {
       <Router>
         <NavBar />
         <Routes>
+          {/* Public Routes */}
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/profile" element={<Profile />} />
 
-          {/* Travel Logs Routes */}
+          {/* Protected Travel Log Routes */}
           <Route
             path="/travel-log"
             element={
@@ -44,7 +43,7 @@ function App() {
             }
           />
 
-          {/* Journey Plans Routes */}
+          {/* Protected Journey Plans Routes */}
           <Route
             path="/journey-plans"
             element={
@@ -53,8 +52,22 @@ function App() {
               </ProtectedRoute>
             }
           />
-
-          <Route path="/profile" element={<Profile />} />
+          <Route
+            path="/plans/:planId"
+            element={
+              <ProtectedRoute>
+                <TravelPlanDetails />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/map"
+            element={
+              <ProtectedRoute>
+                <PlacesMapPage />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </Router>
     </div>

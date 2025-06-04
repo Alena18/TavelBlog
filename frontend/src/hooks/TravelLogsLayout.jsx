@@ -65,7 +65,7 @@ export default function TravelLogsLayout({
             width: "200px",
           }}
         >
-          <button type="submit">Add Travel Log 🗺️</button>
+          <button type="submit">Add Log 🗺️</button>
         </div>
       </form>
 

@@ -14,6 +14,22 @@ import {
 import { db, auth } from "../firebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
 
+const capitalizeWords = (str) => {
+  return str
+    .toLowerCase()
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+};
+
+const processTags = (tagString) => {
+  return tagString
+    .split(/[ ,]+/)
+    .map((tag) => tag.replace(/^#/, "").trim())
+    .filter(Boolean)
+    .map((tag) => `#${tag}`);
+};
+
 const useTravelLogs = (logId = null) => {
   const [logs, setLogs] = useState([]);
   const [log, setLog] = useState(null);
@@ -27,7 +43,6 @@ const useTravelLogs = (logId = null) => {
   const [userId, setUserId] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Track authentication state
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -38,11 +53,9 @@ const useTravelLogs = (logId = null) => {
         setLog(null);
       }
     });
-
     return unsubscribe;
   }, []);
 
-  // Fetch logs once userId is set
   useEffect(() => {
     if (userId) {
       fetchLogs(userId);
@@ -81,9 +94,7 @@ const useTravelLogs = (logId = null) => {
             try {
               const parsed = JSON.parse(rawTags);
               rawTags = Array.isArray(parsed) ? parsed.join(", ") : rawTags;
-            } catch {
-              // fallback to raw string
-            }
+            } catch {}
           }
 
           setLog({
@@ -118,14 +129,13 @@ const useTravelLogs = (logId = null) => {
 
   const saveLog = async (id, onSuccess) => {
     try {
-      const cleanedTags = log.tags
-        .split(",")
-        .map((tag) => tag.replace(/^#/, "").trim())
-        .filter(Boolean);
+      const cleanedTags = processTags(log.tags);
 
       await updateDoc(doc(db, "travelLogs", id), {
         ...log,
-        tags: cleanedTags.join(", "),
+        title: capitalizeWords(log.title),
+        description: capitalizeWords(log.description),
+        tags: cleanedTags.join(" "),
       });
 
       await fetchLogs(userId);
@@ -153,14 +163,13 @@ const useTravelLogs = (logId = null) => {
     }
 
     try {
-      const cleanedTags = newLog.tags
-        .split(",")
-        .map((tag) => tag.replace(/^#/, "").trim())
-        .filter(Boolean);
+      const cleanedTags = processTags(newLog.tags);
 
       const logData = {
         ...newLog,
-        tags: cleanedTags.join(", "),
+        title: capitalizeWords(newLog.title),
+        description: capitalizeWords(newLog.description),
+        tags: cleanedTags.join(" "),
         user_id: userId,
         postDate: new Date().toISOString(),
       };

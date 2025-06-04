@@ -1,9 +1,8 @@
-// components/JourneyPlansLayout.jsx
-import React from "react";
+import React, { useState } from "react";
 import { FaTrash, FaCheck, FaTimes } from "react-icons/fa";
 import { FiEdit3 } from "react-icons/fi";
 import Select from "react-select";
-import { formatDateDMY } from "./formatDate"; // or from a shared utils folder
+import { formatDateDMY } from "./formatDate";
 import "../App.css";
 
 export default function JourneyPlansLayout({
@@ -12,16 +11,21 @@ export default function JourneyPlansLayout({
   setNewPlan,
   editedPlan,
   setEditedPlan,
-  editingId,
   handleNewChange,
   handleEditChange,
   addPlan,
   startEditing,
-  cancelEditing,
   saveEdit,
   deletePlan,
   activityOptions,
 }) {
+  const [selectedPlan, setSelectedPlan] = useState(null);
+
+  const openEditModal = (plan) => {
+    startEditing(plan);
+    setSelectedPlan(plan);
+  };
+
   return (
     <div className="dashboard">
       <h2 className="home-title">Journey Plans Dashboard</h2>
@@ -103,109 +107,109 @@ export default function JourneyPlansLayout({
           </tr>
         </thead>
         <tbody>
-          {plans.map((plan) => {
-            const isEditing = editingId === plan.id;
-            return (
-              <tr key={plan.id}>
-                {isEditing ? (
-                  <>
-                    <td>
-                      <input
-                        name="name"
-                        value={editedPlan.name || ""}
-                        onChange={handleEditChange}
-                      />
-                    </td>
-                    <td>
-                      <input
-                        name="locations"
-                        value={editedPlan.locations || ""}
-                        onChange={handleEditChange}
-                      />
-                    </td>
-                    <td>
-                      <input
-                        type="date"
-                        name="startDate"
-                        value={editedPlan.startDate || ""}
-                        onChange={handleEditChange}
-                      />
-                    </td>
-                    <td>
-                      <input
-                        type="date"
-                        name="endDate"
-                        value={editedPlan.endDate || ""}
-                        onChange={handleEditChange}
-                      />
-                    </td>
-                    <td>
-                      <Select
-                        options={activityOptions}
-                        isMulti
-                        onChange={(selectedOptions) => {
-                          const values = selectedOptions.map(
-                            (opt) => opt.value
-                          );
-                          setEditedPlan((prev) => ({
-                            ...prev,
-                            activities: values,
-                          }));
-                        }}
-                        value={activityOptions.filter((opt) =>
-                          editedPlan.activities?.includes(opt.value)
-                        )}
-                      />
-                    </td>
-                    <td>
-                      <textarea
-                        name="description"
-                        value={editedPlan.description || ""}
-                        onChange={handleEditChange}
-                      />
-                    </td>
-                    <td className="inline-buttons">
-                      <button onClick={() => saveEdit(plan.id)}>
-                        <FaCheck color="white" />
-                      </button>
-                      <button onClick={cancelEditing}>
-                        <FaTimes color="white" />
-                      </button>
-                    </td>
-                  </>
-                ) : (
-                  <>
-                    <td>{plan.name}</td>
-                    <td>
-                      {Array.isArray(plan.locations)
-                        ? plan.locations.join(", ")
-                        : plan.locations}
-                    </td>
-                    <td>{formatDateDMY(plan.startDate)}</td>
-                    <td>{formatDateDMY(plan.endDate)}</td>
-                    <td>
-                      {Array.isArray(plan.activities)
-                        ? plan.activities.join(", ")
-                        : plan.activities}
-                    </td>
-                    <td>{plan.description}</td>
-                    <td>
-                      <div className="action-buttons">
-                        <button onClick={() => startEditing(plan)}>
-                          <FiEdit3 />
-                        </button>
-                        <button onClick={() => deletePlan(plan.id)}>
-                          <FaTrash color="white" />
-                        </button>
-                      </div>
-                    </td>
-                  </>
-                )}
-              </tr>
-            );
-          })}
+          {plans.map((plan) => (
+            <tr key={plan.id}>
+              <td>{plan.name}</td>
+              <td>
+                {Array.isArray(plan.locations)
+                  ? plan.locations.join(", ")
+                  : plan.locations}
+              </td>
+              <td>{formatDateDMY(plan.startDate)}</td>
+              <td>{formatDateDMY(plan.endDate)}</td>
+              <td>
+                {Array.isArray(plan.activities)
+                  ? plan.activities.join(", ")
+                  : plan.activities}
+              </td>
+              <td>{plan.description}</td>
+              <td>
+                <div className="action-buttons">
+                  <button onClick={() => openEditModal(plan)}>
+                    <FiEdit3 />
+                  </button>
+                  <button onClick={() => deletePlan(plan.id)}>
+                    <FaTrash color="white" />
+                  </button>
+                </div>
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
+
+      {/* Edit Modal */}
+      {selectedPlan && (
+        <div className="modal-overlay">
+          <form className="add-form">
+            <h3>Edit Journey Plan</h3>
+            <input
+              name="name"
+              value={editedPlan.name || ""}
+              onChange={handleEditChange}
+            />
+            <input
+              name="locations"
+              value={editedPlan.locations || ""}
+              onChange={handleEditChange}
+            />
+            <input
+              type="date"
+              name="startDate"
+              value={editedPlan.startDate || ""}
+              onChange={handleEditChange}
+            />
+            <input
+              type="date"
+              name="endDate"
+              value={editedPlan.endDate || ""}
+              onChange={handleEditChange}
+            />
+            <Select
+              options={activityOptions}
+              isMulti
+              onChange={(selectedOptions) => {
+                const values = selectedOptions.map((opt) => opt.value);
+                setEditedPlan((prev) => ({
+                  ...prev,
+                  activities: values,
+                }));
+              }}
+              value={activityOptions.filter((opt) =>
+                editedPlan.activities?.includes(opt.value)
+              )}
+            />
+            <textarea
+              name="description"
+              value={editedPlan.description || ""}
+              onChange={handleEditChange}
+            />
+            <div className="modal-actions">
+              <button
+                type="button"
+                onClick={() => {
+                  saveEdit(selectedPlan.id);
+                  setSelectedPlan(null);
+                }}
+              >
+                <FaCheck />
+              </button>
+              <button type="button" onClick={() => setSelectedPlan(null)}>
+                <FaTimes />
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  deletePlan(selectedPlan.id);
+                  setSelectedPlan(null);
+                }}
+              >
+                <FaTrash />
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
     </div>
   );
 }
