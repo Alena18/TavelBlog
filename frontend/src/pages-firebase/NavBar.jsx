@@ -115,7 +115,7 @@ function NavBar() {
                     whiteSpace: "nowrap",
                   }}
                 >
-                  Flashcards Memory
+                  Flashcards Memory Game
                 </a>
               </div>
             )}

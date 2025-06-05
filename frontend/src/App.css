@@ -28,6 +28,45 @@ h2 {
   
 }
 
+/* Home page */
+.home-login-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 4rem;
+  padding: 25px; /* Increase padding to make gradient border thicker */
+  border-radius: 36px;
+  background: linear-gradient(to right, #9358d1, #4e54c8, #00b4db);
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+  transform: scale(0.4); /* Shrinks the entire block to about 15% */
+  transform-origin: top center;
+}
+
+.home-login-box {
+  background: white;
+  border-radius: 30px;
+  padding: 1.5rem 3rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 1;
+}
+
+.home-login {
+  font-family: "Niconne", cursive;
+  font-size: 5rem;
+  color: #9358d1;
+  text-align: center;
+}
+
+.login-link {
+  text-decoration: none;
+}
+
+
+
+
 /* NavBar */
 .navbar {  
   width: 100%;
@@ -633,7 +672,7 @@ button {
   border-radius: 12px;
   background: linear-gradient(to right, #5400b0, #4e54c8, #00b4db);
   padding: 4px; /* border thickness */
-  margin-top: -100px;
+  margin-top: -200px;
 }
 
 .map-container > .inner-content {

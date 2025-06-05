@@ -95,7 +95,7 @@
   transform: translateY(-50%);
   color: #5c2ebc;
   font-size: 1.2rem;
-  pointer-events: none; /* so the icon doesn't block input clicks */
+  pointer-events: auto; 
 }
 
 .search-container {
