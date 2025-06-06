@@ -345,75 +345,83 @@ function Profile() {
       {/* Journey Plan Modal */}
       {selectedPlan && (
         <div className="modal-overlay">
-          <form className="add-form">
-            <h3>Edit Journey Plan</h3>
-            <input
-              name="name"
-              value={editedPlan.name || ""}
-              onChange={handleEditChange}
-            />
-            <input
-              name="locations"
-              value={editedPlan.locations || ""}
-              onChange={handleEditChange}
-            />
-            <input
-              type="date"
-              name="startDate"
-              value={editedPlan.startDate || ""}
-              onChange={handleEditChange}
-            />
-            <input
-              type="date"
-              name="endDate"
-              value={editedPlan.endDate || ""}
-              onChange={handleEditChange}
-            />
-            <textarea
-              name="activities"
-              value={
-                Array.isArray(editedPlan.activities)
-                  ? editedPlan.activities.join(", ")
-                  : editedPlan.activities || ""
-              }
-              onChange={(e) =>
-                handleEditChange({
-                  target: {
-                    name: "activities",
-                    value: e.target.value.split(",").map((a) => a.trim()),
-                  },
-                })
-              }
-            />
-            <textarea
-              name="description"
-              value={editedPlan.description || ""}
-              onChange={handleEditChange}
-            />
-            <div className="modal-actions">
-              <button
-                type="button"
-                onClick={() => {
-                  saveEdit(selectedPlan.id);
-                  setSelectedPlan(null);
-                }}
-              >
-                <FaCheck />
-              </button>
-              <button type="button" onClick={() => setSelectedPlan(null)}>
-                <FaTimes />
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  deletePlan(selectedPlan.id);
-                  setSelectedPlan(null);
-                }}
-              >
-                <FaTrash />
-              </button>
-            </div>
-          </form>
+          <div className="modal-content">
+            {/* <h3>Hello</h3> */}
+            <form className="popup-marker-form">
+              <input
+                name="name"
+                value={editedPlan.name || ""}
+                onChange={handleEditChange}
+              />
+              <input
+                name="locations"
+                value={editedPlan.locations || ""}
+                onChange={handleEditChange}
+              />
+              <input
+                type="date"
+                name="startDate"
+                value={editedPlan.startDate || ""}
+                onChange={handleEditChange}
+              />
+              <input
+                type="date"
+                name="endDate"
+                value={editedPlan.endDate || ""}
+                onChange={handleEditChange}
+              />
+              <textarea
+                name="activities"
+                value={
+                  Array.isArray(editedPlan.activities)
+                    ? editedPlan.activities.join(", ")
+                    : editedPlan.activities || ""
+                }
+                onChange={(e) =>
+                  handleEditChange({
+                    target: {
+                      name: "activities",
+                      value: e.target.value.split(",").map((a) => a.trim()),
+                    },
+                  })
+                }
+              />
+              <textarea
+                name="description"
+                value={editedPlan.description || ""}
+                onChange={handleEditChange}
+              />
+              <div className="inline-buttons">
+                <button
+                  type="button"
+                  className="btn-save"
+                  onClick={() => {
+                    saveEdit(selectedPlan.id);
+                    setSelectedPlan(null);
+                  }}
+                >
+                  <FaCheck />
+                </button>
+                <button
+                  type="button"
+                  className="btn-cancel"
+                  onClick={() => setSelectedPlan(null)}
+                >
+                  <FaTimes />
+                </button>
+                <button
+                  type="button"
+                  className="btn-delete"
+                  onClick={() => {
+                    deletePlan(selectedPlan.id);
+                    setSelectedPlan(null);
+                  }}
+                >
+                  <FaTrash />
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>

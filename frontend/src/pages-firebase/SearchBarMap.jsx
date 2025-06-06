@@ -26,7 +26,7 @@ export default function SearchBarMap({
         <input
           type="text"
           className="search-input"
-          placeholder="Search by placename..."
+          placeholder="Search"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           list="place-suggestions"

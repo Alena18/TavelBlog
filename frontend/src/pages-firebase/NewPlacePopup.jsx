@@ -18,6 +18,7 @@ export default function NewPlacePopup({
   setNewPlace,
   handleAddPlace,
   cancelAdd,
+  journeyPlans,
 }) {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -47,7 +48,8 @@ export default function NewPlacePopup({
             required
           />
           <input
-            name="name" // so browser search/auto-fill triggers
+            list="journey-options"
+            name="journeyname"
             placeholder="Journey"
             value={newPlace.journeyname}
             onChange={(e) =>
@@ -55,6 +57,12 @@ export default function NewPlacePopup({
             }
             required
           />
+          <datalist id="journey-options">
+            {journeyPlans.map((plan, idx) => (
+              <option key={idx} value={plan} />
+            ))}
+          </datalist>
+
           <select
             name="review"
             value={newPlace.review}

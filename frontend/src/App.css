@@ -28,6 +28,10 @@ h2 {
   
 }
 
+h3 {
+  text-align: center;
+}
+
 /* Home page */
 .home-login-wrapper {
   display: flex;
@@ -401,6 +405,11 @@ h2 {
   font-weight: 500;
 }
 
+/* Travel Log */
+.form-wrapper-logs{
+  max-width: 500px;
+  margin: 0 auto;
+}
 
 /* Plans table */
 .add-form {
@@ -435,25 +444,6 @@ h2 {
   font-size: 14px;
   border: 1px solid #ccc;
   box-sizing: border-box;
-}
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 999;
-}
-
-.modal-content {
-  background: white;
-  border-radius: 12px;
-  padding: 20px;
 }
 
 /* Table */
@@ -711,15 +701,16 @@ button {
   background: white;
   border-radius: 10px;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-  max-width: 220px; /* 👈 Was ~280px */
-  min-width: 200px;
+  width: 100%;              /* fill modal-content */
+  max-width: 320px;         /* consistent limit */
   box-sizing: border-box;
-  font-size: 13px; /* 👈 Smaller base font size */
+  font-size: 13px;
+  margin: 0 auto;           /* center it horizontally */
 }
 
 .popup-marker-form input,
 .popup-marker-form select {
-  padding: 8px; /* 👈 Less padding */
+  padding: 8px; /* Less padding */
   font-size: 13px;
   border-radius: 5px;
   border: 1px solid #ccc;

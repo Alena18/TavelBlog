@@ -4,7 +4,6 @@ import NavBar from "./pages-firebase/NavBar";
 import Login from "./pages-firebase/Login";
 import Plans from "./pages-firebase/JourneyPlans";
 import TravelLog from "./pages-firebase/TravelLog";
-import TravelLogDetail from "./pages-firebase/TravelLogDetail";
 import Home from "./pages-firebase/Home";
 import Profile from "./pages-firebase/Profile";
 import TravelPlanDetails from "./pages-firebase/TravelPlanDetails";
@@ -31,14 +30,6 @@ function App() {
             element={
               <ProtectedRoute>
                 <TravelLog />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/travel-log/:id"
-            element={
-              <ProtectedRoute>
-                <TravelLogDetail />
               </ProtectedRoute>
             }
           />

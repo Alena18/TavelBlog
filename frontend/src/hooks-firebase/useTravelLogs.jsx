@@ -1,38 +1,30 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import {
   collection,
-  addDoc,
   getDocs,
-  doc,
+  addDoc,
   updateDoc,
   deleteDoc,
-  getDoc,
-  query,
-  where,
-  orderBy,
+  doc,
 } from "firebase/firestore";
 import { db, auth } from "../firebaseConfig";
-import { onAuthStateChanged } from "firebase/auth";
 
-const capitalizeWords = (str) => {
-  return str
+const capitalizeWords = (str) =>
+  str
     .toLowerCase()
     .split(" ")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
-};
 
-const processTags = (tagString) => {
-  return tagString
+const processTags = (tagString) =>
+  tagString
     .split(/[ ,]+/)
     .map((tag) => tag.replace(/^#/, "").trim())
     .filter(Boolean)
     .map((tag) => `#${tag}`);
-};
 
-const useTravelLogs = (logId = null) => {
+export default function useTravelLogs() {
   const [logs, setLogs] = useState([]);
-  const [log, setLog] = useState(null);
   const [newLog, setNewLog] = useState({
     title: "",
     description: "",
@@ -40,86 +32,34 @@ const useTravelLogs = (logId = null) => {
     endDate: "",
     tags: "",
   });
+  const [editLog, setEditLog] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState("startDate");
   const [userId, setUserId] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  const [places, setPlaces] = useState([]);
+
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUserId(user.uid);
-      } else {
-        setUserId(null);
-        setLogs([]);
-        setLog(null);
-      }
-    });
-    return unsubscribe;
+    const user = auth.currentUser;
+    if (user) {
+      setUserId(user.uid);
+      fetchLogs();
+      fetchPlaces();
+    }
   }, []);
 
-  useEffect(() => {
-    if (userId) {
-      fetchLogs(userId);
-    } else {
-      setIsLoading(false);
-    }
-  }, [userId, logId]);
-
-  const fetchLogs = async (uid) => {
-    if (!uid) return;
-    setIsLoading(true);
-
-    try {
-      const q = query(
-        collection(db, "travelLogs"),
-        where("user_id", "==", uid),
-        orderBy("startDate")
-      );
-
-      const snapshot = await getDocs(q);
-      const allLogs = snapshot.docs.map((docSnap) => ({
-        id: docSnap.id,
-        ...docSnap.data(),
-      }));
-
-      setLogs(allLogs);
-
-      if (logId) {
-        const docRef = doc(db, "travelLogs", logId);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          const found = docSnap.data();
-          let rawTags = found.tags || "";
-
-          if (typeof rawTags === "string" && rawTags.startsWith("[")) {
-            try {
-              const parsed = JSON.parse(rawTags);
-              rawTags = Array.isArray(parsed) ? parsed.join(", ") : rawTags;
-            } catch {}
-          }
-
-          setLog({
-            ...found,
-            startDate: found.startDate,
-            endDate: found.endDate,
-            tags: rawTags,
-            id: docSnap.id,
-          });
-        } else {
-          setLog(null);
-        }
-      } else {
-        setLog(null);
-      }
-    } catch (error) {
-      console.error("Failed to fetch logs:", error);
-    } finally {
-      setIsLoading(false);
-    }
+  const fetchLogs = async () => {
+    const snapshot = await getDocs(collection(db, "travelLogs"));
+    const list = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    setLogs(list);
+    setIsLoading(false);
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setLog((prev) => ({ ...prev, [name]: value }));
+  const fetchPlaces = async () => {
+    const snapshot = await getDocs(collection(db, "visitedPlaces"));
+    const list = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    setPlaces(list);
   };
 
   const handleNewChange = (e) => {
@@ -127,83 +67,68 @@ const useTravelLogs = (logId = null) => {
     setNewLog((prev) => ({ ...prev, [name]: value }));
   };
 
-  const saveLog = async (id, onSuccess) => {
-    try {
-      const cleanedTags = processTags(log.tags);
-
-      await updateDoc(doc(db, "travelLogs", id), {
-        ...log,
-        title: capitalizeWords(log.title),
-        description: capitalizeWords(log.description),
-        tags: cleanedTags.join(" "),
-      });
-
-      await fetchLogs(userId);
-      if (onSuccess) onSuccess();
-    } catch (err) {
-      console.error("Save failed:", err);
-    }
-  };
-
-  const deleteLog = async (id, onSuccess) => {
-    try {
-      await deleteDoc(doc(db, "travelLogs", id));
-      await fetchLogs(userId);
-      if (onSuccess) onSuccess();
-    } catch (err) {
-      console.error("Delete failed:", err);
-    }
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setEditLog((prev) => ({ ...prev, [name]: value }));
   };
 
   const addLog = async (e) => {
     e.preventDefault();
-    if (!userId) {
-      console.warn("No authenticated user. Cannot add log.");
-      return;
-    }
+    const logData = {
+      ...newLog,
+      title: capitalizeWords(newLog.title.trim()),
+      tags: processTags(newLog.tags).join(" "),
+      postDate: new Date().toISOString(),
+    };
+    const docRef = await addDoc(collection(db, "travelLogs"), logData);
+    setLogs((prev) => [...prev, { ...logData, id: docRef.id }]);
+    setNewLog({
+      title: "",
+      description: "",
+      startDate: "",
+      endDate: "",
+      tags: "",
+    });
+  };
 
-    try {
-      const cleanedTags = processTags(newLog.tags);
+  const saveLog = async (id, callback) => {
+    const logData = {
+      ...editLog,
+      title: capitalizeWords(editLog.title.trim()),
+      tags: processTags(editLog.tags).join(" "),
+    };
+    const docRef = doc(db, "travelLogs", id);
+    await updateDoc(docRef, logData);
+    setLogs((prev) =>
+      prev.map((log) => (log.id === id ? { ...log, ...logData } : log))
+    );
+    if (callback) callback();
+  };
 
-      const logData = {
-        ...newLog,
-        title: capitalizeWords(newLog.title),
-        description: capitalizeWords(newLog.description),
-        tags: cleanedTags.join(" "),
-        user_id: userId,
-        postDate: new Date().toISOString(),
-      };
-
-      await addDoc(collection(db, "travelLogs"), logData);
-      await fetchLogs(userId);
-
-      setNewLog({
-        title: "",
-        description: "",
-        startDate: "",
-        endDate: "",
-        tags: "",
-      });
-    } catch (error) {
-      console.error("Add log failed:", error);
-    }
+  const deleteLog = async (id, callback) => {
+    const docRef = doc(db, "travelLogs", id);
+    await deleteDoc(docRef);
+    setLogs((prev) => prev.filter((log) => log.id !== id));
+    if (callback) callback();
   };
 
   return {
     logs,
-    log,
     newLog,
-    userId,
-    isLoading,
-    setLog,
     setNewLog,
     handleNewChange,
     handleChange,
-    fetchLogs,
+    addLog,
+    editLog,
+    setEditLog,
     saveLog,
     deleteLog,
-    addLog,
+    searchQuery,
+    setSearchQuery,
+    sortBy,
+    setSortBy,
+    isLoading,
+    userId,
+    places,
   };
-};
-
-export default useTravelLogs;
+}

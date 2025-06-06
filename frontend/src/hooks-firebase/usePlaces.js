@@ -21,6 +21,17 @@ export function usePlaces() {
     review: "visited",
   });
 
+  const [journeyPlans, setJourneyPlans] = useState([]);
+
+  useEffect(() => {
+    const fetchPlans = async () => {
+      const snapshot = await getDocs(collection(db, "journeyPlans"));
+      const planList = snapshot.docs.map((doc) => doc.data().name); // assuming `name` is the title field
+      setJourneyPlans(planList);
+    };
+    fetchPlans();
+  }, []);
+
   const [editPlace, setEditPlace] = useState(null); // edit state
 
   useEffect(() => {
@@ -79,6 +90,11 @@ export function usePlaces() {
     e.preventDefault();
     if (!newMarker) return;
 
+    if (!journeyPlans.includes(newPlace.journeyname)) {
+      alert("Please choose a valid journey name from your journey plans.");
+      return;
+    }
+
     const data = {
       ...newPlace,
       latitude: newMarker.lat,
@@ -100,27 +116,30 @@ export function usePlaces() {
   };
 
   // EDIT: Submit handler
-  const handleEditSubmit = async (e, popupRefs) => {
+  const handleEditSubmit = async (e, popupRefs = null) => {
     e.preventDefault();
     if (!editPlace?.id) return;
 
-    const { id, journeyname, placename, description, review } = editPlace;
+    const id = editPlace.id;
+    const placename = editPlace.placename.trim();
+    const description = editPlace.description.trim();
+    const journeyname = (editPlace.journeyname || "").trim();
+    const review = editPlace.review;
+
+    // Validation
+    if (!journeyPlans.includes(journeyname)) {
+      alert("Please choose a valid journey name from your journey plans.");
+      return;
+    }
+
+    const updatedData = { placename, description, journeyname, review };
     const docRef = doc(db, "visitedPlaces", id);
+    await updateDoc(docRef, updatedData);
 
-    await updateDoc(docRef, { journeyname, placename, description, review });
+    // REFETCH all places (this is the fix!)
+    await fetchPlaces();
 
-    setPlaces((prev) =>
-      prev.map((p) =>
-        p.id === id ? { ...p, journeyname, placename, description, review } : p
-      )
-    );
-    setFilteredPlaces((prev) =>
-      prev.map((p) =>
-        p.id === id ? { ...p, journeyname, placename, description, review } : p
-      )
-    );
-
-    //  CLOSE the popup manually
+    // Close map popup if applicable
     const popup = popupRefs?.current?.[id];
     if (popup && popup._source?._map) {
       popup._source._map.closePopup(popup);
@@ -138,6 +157,7 @@ export function usePlaces() {
     updatePlace,
     deletePlace,
     searchPlaces,
+    journeyPlans,
 
     // New marker form
     newMarker,

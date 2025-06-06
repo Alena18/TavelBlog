@@ -4,6 +4,7 @@ import { FiEdit3 } from "react-icons/fi";
 import Select from "react-select";
 import { formatDateDMY } from "./formatDate";
 import "../App.css";
+import "../pages/Profile.css";
 
 export default function JourneyPlansLayout({
   plans,
@@ -63,7 +64,7 @@ export default function JourneyPlansLayout({
         <Select
           options={activityOptions}
           isMulti
-          placeholder="Select activities..."
+          placeholder="Select activities"
           onChange={(selectedOptions) => {
             const values = selectedOptions.map((opt) => opt.value);
             setNewPlan((prev) => ({ ...prev, activities: values }));
@@ -88,7 +89,13 @@ export default function JourneyPlansLayout({
           }}
         >
           <button type="submit">
-            Add Plan <span className="button-palm">🏝️</span>
+            Add Plan{" "}
+            <span
+              className="palm"
+              style={{ fontSize: "1.2em", marginLeft: "5px" }}
+            >
+              🏝️
+            </span>
           </button>
         </div>
       </form>
@@ -118,9 +125,15 @@ export default function JourneyPlansLayout({
               <td>{formatDateDMY(plan.startDate)}</td>
               <td>{formatDateDMY(plan.endDate)}</td>
               <td>
-                {Array.isArray(plan.activities)
-                  ? plan.activities.join(", ")
-                  : plan.activities}
+                {Array.isArray(plan.activities) &&
+                  plan.activities
+                    .map((activity) => {
+                      const option = activityOptions.find(
+                        (opt) => opt.value === activity
+                      );
+                      return option ? option.label.split(" ")[0] : ""; // get only the icon
+                    })
+                    .join(" ")}
               </td>
               <td>{plan.description}</td>
               <td>
@@ -141,73 +154,81 @@ export default function JourneyPlansLayout({
       {/* Edit Modal */}
       {selectedPlan && (
         <div className="modal-overlay">
-          <form className="add-form">
-            <h3>Edit Journey Plan</h3>
-            <input
-              name="name"
-              value={editedPlan.name || ""}
-              onChange={handleEditChange}
-            />
-            <input
-              name="locations"
-              value={editedPlan.locations || ""}
-              onChange={handleEditChange}
-            />
-            <input
-              type="date"
-              name="startDate"
-              value={editedPlan.startDate || ""}
-              onChange={handleEditChange}
-            />
-            <input
-              type="date"
-              name="endDate"
-              value={editedPlan.endDate || ""}
-              onChange={handleEditChange}
-            />
-            <Select
-              options={activityOptions}
-              isMulti
-              onChange={(selectedOptions) => {
-                const values = selectedOptions.map((opt) => opt.value);
-                setEditedPlan((prev) => ({
-                  ...prev,
-                  activities: values,
-                }));
-              }}
-              value={activityOptions.filter((opt) =>
-                editedPlan.activities?.includes(opt.value)
-              )}
-            />
-            <textarea
-              name="description"
-              value={editedPlan.description || ""}
-              onChange={handleEditChange}
-            />
-            <div className="modal-actions">
-              <button
-                type="button"
-                onClick={() => {
-                  saveEdit(selectedPlan.id);
-                  setSelectedPlan(null);
+          <div className="modal-content">
+            <form className="popup-marker-form">
+              {/* <h3>Edit Journey Plan</h3> */}
+              <input
+                name="name"
+                value={editedPlan.name || ""}
+                onChange={handleEditChange}
+              />
+              <input
+                name="locations"
+                value={editedPlan.locations || ""}
+                onChange={handleEditChange}
+              />
+              <input
+                type="date"
+                name="startDate"
+                value={editedPlan.startDate || ""}
+                onChange={handleEditChange}
+              />
+              <input
+                type="date"
+                name="endDate"
+                value={editedPlan.endDate || ""}
+                onChange={handleEditChange}
+              />
+              <Select
+                options={activityOptions}
+                isMulti
+                onChange={(selectedOptions) => {
+                  const values = selectedOptions.map((opt) => opt.value);
+                  setEditedPlan((prev) => ({
+                    ...prev,
+                    activities: values,
+                  }));
                 }}
-              >
-                <FaCheck />
-              </button>
-              <button type="button" onClick={() => setSelectedPlan(null)}>
-                <FaTimes />
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  deletePlan(selectedPlan.id);
-                  setSelectedPlan(null);
-                }}
-              >
-                <FaTrash />
-              </button>
-            </div>
-          </form>
+                value={activityOptions.filter((opt) =>
+                  editedPlan.activities?.includes(opt.value)
+                )}
+              />
+              <textarea
+                name="description"
+                value={editedPlan.description || ""}
+                onChange={handleEditChange}
+              />
+              <div className="modal-actions">
+                <button
+                  type="button"
+                  className="btn-save"
+                  onClick={() => {
+                    saveEdit(selectedPlan.id);
+                    setSelectedPlan(null);
+                  }}
+                >
+                  <FaCheck />
+                </button>
+                <button
+                  type="button"
+                  className="btn-cancel"
+                  onClick={() => setSelectedPlan(null)}
+                >
+                  <FaTimes />
+                </button>
+                <button
+                  type="button"
+                  className="btn-delete"
+                  onClick={() => {
+                    deletePlan(selectedPlan.id);
+                    setSelectedPlan(null);
+                  }}
+                >
+                  <FaTrash />
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>

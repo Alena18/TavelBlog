@@ -96,6 +96,7 @@
   color: #5c2ebc;
   font-size: 1.2rem;
   pointer-events: auto; 
+   font-weight: normal;
 }
 
 .search-container {
@@ -115,6 +116,7 @@
   color: #333;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
   transition: 0.2s;
+  width: 450px;
 }
 
 .search-input:focus {
@@ -169,7 +171,7 @@
   background: white;
   padding: 2rem;
   border-radius: 10px;
-  width: 500px;
+  width: 250px;
   max-width: 90%;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }

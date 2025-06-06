@@ -90,20 +90,6 @@ function NavBar() {
                 }}
               >
                 <a
-                  href="https://hangadictator.onrender.com/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{
-                    display: "block",
-                    padding: "8px 12px",
-                    textDecoration: "none",
-                    color: "#333",
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  Hang Dictator
-                </a>
-                <a
                   href="https://alena18.github.io/FlashcardsEnglishBelarusianPetsMemoryGame/"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -116,6 +102,20 @@ function NavBar() {
                   }}
                 >
                   Flashcards Memory Game
+                </a>
+                <a
+                  href="https://hangadictator.onrender.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: "block",
+                    padding: "8px 12px",
+                    textDecoration: "none",
+                    color: "#333",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  Hang Dictator
                 </a>
               </div>
             )}

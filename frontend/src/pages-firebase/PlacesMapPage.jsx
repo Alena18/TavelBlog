@@ -5,7 +5,6 @@ import { usePlaces } from "../hooks-firebase/usePlaces";
 import bgImage from "../assets/images/img.png";
 import { FaCheck, FaTimes, FaTrash } from "react-icons/fa";
 
-// Custom components/hooks
 import SearchBarMap from "./SearchBarMap";
 import NewPlacePopup from "./NewPlacePopup";
 import {
@@ -14,7 +13,7 @@ import {
   createIcon,
 } from "../hooks-firebase/useMapHelpers";
 
-// 🔍 Handles flying to a place on search select
+// Handles flying to a place on search select
 const FlyToSearchResult = ({ place }) => {
   const map = useMap();
 
@@ -41,6 +40,7 @@ function PlacesMapPage() {
     setEditPlace,
     handleEditSubmit,
     cancelEdit,
+    journeyPlans,
   } = usePlaces();
 
   const [zoomLevel, setZoomLevel] = useState(4);
@@ -113,10 +113,20 @@ function PlacesMapPage() {
                     icon={createIcon(place.placename)}
                   >
                     <Popup
+                      eventHandlers={{
+                        add: () => setEditPlace({ ...place }),
+                      }}
                       ref={(ref) => {
+                        // Wait until Leaflet attaches the popup to the source
                         setTimeout(() => {
                           if (ref && ref._source && ref._source._popup) {
                             popupRefs.current[place.id] = ref._source._popup;
+                            console.log("Popup ref set for:", place.placename);
+                          } else {
+                            console.warn(
+                              "Popup ref NOT set yet for:",
+                              place.placename
+                            );
                           }
                         }, 0);
                       }}
@@ -137,6 +147,7 @@ function PlacesMapPage() {
                             }
                             required
                           />
+
                           <input
                             type="text"
                             value={editPlace.description}
@@ -148,11 +159,11 @@ function PlacesMapPage() {
                             }
                             required
                           />
+
                           <input
-                            type="text"
-                            name="name"
+                            list="edit-journey-options"
+                            name="journeyname"
                             placeholder="Journey"
-                            autoComplete="on"
                             value={editPlace.journeyname}
                             onChange={(e) =>
                               setEditPlace((prev) => ({
@@ -162,6 +173,12 @@ function PlacesMapPage() {
                             }
                             required
                           />
+                          <datalist id="edit-journey-options">
+                            {journeyPlans.map((plan, idx) => (
+                              <option key={idx} value={plan} />
+                            ))}
+                          </datalist>
+
                           <p
                             style={{
                               fontSize: "24px",
@@ -185,8 +202,9 @@ function PlacesMapPage() {
                               ? "❤️"
                               : editPlace.review === "ok"
                               ? "⭐"
-                              : "☂️"}
+                              : "📌"}
                           </p>
+
                           <div className="inline-buttons">
                             <button type="submit" className="btn-save">
                               <FaCheck />
@@ -212,13 +230,14 @@ function PlacesMapPage() {
                   </Marker>
                 ))}
 
-              {/* ➕ New Marker */}
+              {/* New Marker */}
               <NewPlacePopup
                 newMarker={newMarker}
                 newPlace={newPlace}
                 setNewPlace={setNewPlace}
                 handleAddPlace={handleAddPlace}
                 cancelAdd={resetNewPlace}
+                journeyPlans={journeyPlans}
               />
             </MapContainer>
           </div>

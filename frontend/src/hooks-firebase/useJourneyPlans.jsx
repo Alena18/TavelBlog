@@ -7,7 +7,8 @@ import {
   doc,
   updateDoc,
 } from "firebase/firestore";
-import { db } from "../firebaseConfig"; // make sure your Firebase setup is correct
+import { db } from "../firebaseConfig";
+import activityOptions from "./activityOptions";
 
 const capitalizeWords = (str) => {
   return str
@@ -29,19 +30,6 @@ const useJourneyPlans = () => {
     description: "",
   });
   const [editedPlan, setEditedPlan] = useState({});
-
-  const activityOptions = [
-    { value: "Hiking", label: "\ud83c\udfdc Hiking" },
-    { value: "Beach", label: "\ud83c\udfd6 Beach" },
-    { value: "Food Tour", label: "\ud83c\udf72 Food Tour" },
-    { value: "Shopping", label: "\ud83c\udfe6 Shopping" },
-    { value: "Culture", label: "\ud83c\udfdb Culture" },
-    { value: "Photography", label: "\ud83d\udcf8 Photography" },
-    { value: "Biking", label: "\ud83d\udeb4 Biking" },
-    { value: "Fishing", label: "\ud83c\udfa3 Fishing" },
-    { value: "Climbing", label: "\ud83e\uddf7 Climbing" },
-    { value: "Nightlife", label: "\ud83c\udf89 Nightlife" },
-  ];
 
   const fetchPlans = async () => {
     try {
