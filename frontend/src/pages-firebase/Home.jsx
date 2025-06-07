@@ -8,12 +8,12 @@ import { signOut, onAuthStateChanged } from "firebase/auth";
 
 function Home() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [carState, setCarState] = useState("stop");
   const navigate = useNavigate();
 
-  // Listen to Firebase auth state
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setIsLoggedIn(!!user); // true if user exists
+      setIsLoggedIn(!!user);
     });
     return () => unsubscribe();
   }, []);
@@ -21,12 +21,18 @@ function Home() {
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      setIsLoggedIn(false); // optional; onAuthStateChanged will also trigger
-      localStorage.removeItem("userInfo"); // clear stored session if used
+      setIsLoggedIn(false);
+      localStorage.removeItem("userInfo");
       navigate("/");
     } catch (error) {
       console.error("Error signing out:", error);
     }
+  };
+
+  const startCar = () => {
+    setCarState("drive");
+    const animation = document.getElementById("driveAnimation");
+    if (animation) animation.beginElement();
   };
 
   return (
@@ -34,7 +40,6 @@ function Home() {
       <h1>
         Welcome to Travel Blog <span className="palm">🏝️</span>
       </h1>
-
       {/* Background blur */}
       <div
         style={{
@@ -53,23 +58,136 @@ function Home() {
       ></div>
 
       {/* Login box */}
-      {!isLoggedIn ? (
-        <div className="home-login-wrapper">
-          <div className="home-login-box">
-            <Link to="/login" className="login-link">
-              <div className="home-login">Log In / Sign Up</div>
+      <div className="home-button-wrapper">
+        <div className="home-button">
+          {!isLoggedIn ? (
+            <Link to="/login" className="button-text">
+              Log In / Sign Up
             </Link>
-          </div>
-        </div>
-      ) : (
-        <div className="home-login-wrapper">
-          <div className="home-login-box">
-            <button onClick={handleLogout} className="login-link home-login">
+          ) : (
+            <button
+              onClick={handleLogout}
+              className="button-text"
+              id="signout-button"
+            >
               Sign Out
             </button>
-          </div>
+          )}
         </div>
-      )}
+
+        <div className="home-button">
+          <button
+            onClick={startCar}
+            className="button-text"
+            style={{
+              outline: "none",
+              boxShadow: "none",
+              textDecoration: "none",
+            }}
+          >
+            Start{" "}
+            <span
+              className="palm"
+              style={{ fontSize: "1.2em", marginLeft: "5px" }}
+            >
+              🧳
+            </span>
+          </button>
+        </div>
+      </div>
+
+      {/* SVG Car Route */}
+      <div className="car-map-wrapper">
+        <svg
+          viewBox="0 0 1000 300"
+          className="road-path"
+          preserveAspectRatio="xMidYMid meet"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          {/* Sea */}
+          <rect x="0" y="70" width="1000" height="300" fill="#a0e9ff" />
+
+          {/* Hills */}
+          <path
+            d="
+      M 0 100 
+      Q 100 10, 200 90 
+      T 400 90 
+      T 600 90 
+      T 800 90 
+      T 1000 100 
+      V 300 
+      H 0 
+      Z
+    "
+            fill="#88c57f"
+          />
+
+          {/* Group Road + Car */}
+          <g transform="translate(0, 90)">
+            {/* Curvier road */}
+            <path
+              d="M 0 60 C 150 0, 600 160, 1000 180"
+              fill="none"
+              stroke="#333"
+              strokeWidth="20"
+              strokeLinecap="round"
+            />
+
+            {/* Dashed center line & motion path */}
+            <path
+              id="motionPath"
+              d="M 0 60 C 150 0, 600 160, 1000 180"
+              fill="none"
+              stroke="#fff"
+              strokeWidth="4"
+              strokeDasharray="12 6"
+            />
+
+            {/* Trees (more of them!) */}
+            {[
+              [30, 25],
+              [100, 72],
+              [150, 15],
+              [200, 90],
+              [250, 95],
+              [320, 50],
+              [400, 115],
+              [500, 85],
+              [600, 92],
+              [720, 120],
+              [800, 190],
+              [900, 135],
+            ].map(([x, y], i) => (
+              <g key={i}>
+                <rect x={x} y={y} width="4" height="10" fill="#663300" />
+                <circle cx={x + 2} cy={y - 5} r="8" fill="#2e8b57" />
+              </g>
+            ))}
+
+            {/* Car */}
+            <image
+              href="/images/ferrari.png"
+              width="60"
+              height="30"
+              transform="translate(0, -12)"
+              className="car-svg"
+            >
+              <animateMotion
+                id="driveAnimation"
+                dur="7s"
+                repeatCount="1"
+                fill="freeze"
+                keyPoints="0;1"
+                keyTimes="0;1"
+                calcMode="linear"
+              >
+                <mpath href="#motionPath" />
+              </animateMotion>
+            </image>
+          </g>
+        </svg>
+      </div>
     </div>
   );
 }

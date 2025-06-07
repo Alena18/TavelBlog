@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&family=Niconne&family=Spinnaker&display=swap');@import url('https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&family=Niconne&family=Spinnaker&display=swap');
 
+
 body {
   font-family: "Spinnaker", sans-serif;
   margin: 0;
@@ -9,7 +10,7 @@ body {
   justify-content: flex-start; /* center vertically */
   min-width: 320px;
   min-height: 100vh;
-  padding-top: 150px; /*pages start after navbar */
+  padding-top: 100px; /*pages start after navbar */
 }
 
 h1 {
@@ -68,7 +69,47 @@ h3 {
   text-decoration: none;
 }
 
+.home-button-wrapper {
+  display: flex;
+  justify-content: center;
+  gap: 5rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
 
+.home-button {
+  transform: scale(0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px; /* reduced from 20px */
+  border-radius: 24px; /* smaller radius */
+  background: linear-gradient(to right, #9358d1, #4e54c8, #00b4db);
+  width: fit-content;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.home-button > * {
+  background: white;
+  border-radius: 10px;
+  padding: 1rem 3rem;
+  font-family: "Niconne", cursive;
+  font-size: 3rem;
+  color: #9358d1;
+  text-align: center;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.home-button > *:hover {
+  opacity: 0.9;
+}
+
+#signout-button{
+  padding: 1.6rem 3rem;        /* ⬅️ more padding for more white */
+  min-width: 180px;
+}
 
 
 /* NavBar */
@@ -722,8 +763,46 @@ button {
   width: 100%;
 }
 
+/* Car */
+.car-container {
+  margin-top: 2rem;
+  position: relative;
+  height: 100px;
+  overflow-x: hidden;
+}
 
+.car-image {
+  width: 120px;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  transition: transform 4s ease-in-out;
+}
 
+.car-image.drive {
+  transform: translateX(100vw);
+}
+
+.car-image.reverse {
+  transform: translateX(-100vw) scaleX(-1); /* flip */
+}
+
+.car-image.stop {
+  transform: translateX(0);
+}
+
+.car-map-wrapper {
+  width: 100%;
+  max-width: 100%;
+  height: 300px;
+  overflow: hidden;
+}
+
+.road-path {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
 
 
 
