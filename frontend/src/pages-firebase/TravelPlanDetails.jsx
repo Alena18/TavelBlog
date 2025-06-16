@@ -8,6 +8,7 @@ import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import "../App.css";
+import "./style-firebase.css";
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#AA00FF"];
 
@@ -121,17 +122,7 @@ export default function TravelPlanDetails() {
     <div className="dashboard container py-4">
       <h2>{plan.name} — Budget Details</h2>
 
-      <div
-        style={{
-          background: "#f5f0ff",
-          borderRadius: "12px",
-          padding: "15px",
-          marginBottom: "15px",
-          maxWidth: "450px",
-          margin: "0 auto 20px auto",
-          boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-        }}
-      >
+      <div className="plan-card">
         <p>
           <strong>Locations:</strong>{" "}
           {Array.isArray(plan.locations)
@@ -155,29 +146,12 @@ export default function TravelPlanDetails() {
         </p>
       </div>
 
-      <div
-        className="add-form"
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "10px",
-          maxWidth: "800px",
-          margin: "0 auto 20px auto",
-          padding: "20px",
-          background: "white",
-          borderRadius: "12px",
-        }}
-      >
+      <div className="receipt-form-wrapper">
         <form
+          className="receipt-form"
           onSubmit={(e) => {
             e.preventDefault();
             addReceipt();
-          }}
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr auto",
-            gap: "10px",
-            width: "100%",
           }}
         >
           <input
@@ -205,10 +179,7 @@ export default function TravelPlanDetails() {
             Add Receipt
           </button>
         </form>
-        <br />
-        <div
-          style={{ display: "flex", justifyContent: "center", width: "100%" }}
-        >
+        <div className="upload-btn-wrap">
           <button
             type="button"
             className="btn-save"
@@ -230,9 +201,9 @@ export default function TravelPlanDetails() {
         <tbody>
           {Object.entries(categoryTotals).map(([category, total]) => (
             <tr key={category}>
-              <td>{category}</td>
-              <td>{total.toFixed(2)}</td>
-              <td className="action-buttons">
+              <td data-label="Category">{category}</td>
+              <td data-label="Amount (€)">{total.toFixed(2)}</td>
+              <td data-label="Manage" className="action-buttons">
                 <button onClick={() => openEditModal(category, total)}>
                   <FiEdit3 />
                 </button>
@@ -248,45 +219,21 @@ export default function TravelPlanDetails() {
             </tr>
           ))}
           <tr>
-            <td style={{ fontWeight: "bold" }}>Total</td>
-            <td style={{ fontWeight: "bold" }}>{totalBudget.toFixed(2)}</td>
-            <td></td>
+            <td data-label="Category" className="bold">
+              Total
+            </td>
+            <td data-label="Amount (€)" className="bold">
+              {totalBudget.toFixed(2)}
+            </td>
+            <td data-label="Manage"></td>
           </tr>
         </tbody>
       </table>
 
-      {/* Pie chart & Comparison table */}
-      <div
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          justifyContent: "space-between",
-          alignItems: "stretch", // ensures both blocks match height
-          gap: "20px",
-          marginTop: "40px",
-        }}
-      >
-        <div
-          style={{
-            flex: "1 1 45%",
-            maxWidth: "45%",
-            minWidth: "300px",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            boxSizing: "border-box",
-          }}
-        >
+      <div className="compare-container">
+        <div className="chart-section">
           <h3 className="text-center">Category Breakdown</h3>
-          <div
-            style={{
-              width: "100%",
-              maxWidth: "420px",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
+          <div className="chart-wrapper">
             <PieChart width={300} height={400}>
               <Pie
                 data={pieData}
@@ -305,42 +252,15 @@ export default function TravelPlanDetails() {
                 ))}
               </Pie>
               <Tooltip />
-              <Legend
-                layout="horizontal"
-                align="center"
-                wrapperStyle={{
-                  width: "100%",
-                  display: "flex",
-                  justifyContent: "center",
-                }}
-              />
+              <Legend layout="horizontal" align="center" />
             </PieChart>
           </div>
         </div>
 
-        <div
-          style={{
-            flex: "1 1 45%",
-            maxWidth: "45%",
-            minWidth: "300px",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "flex-start",
-            alignItems: "flex-start",
-            boxSizing: "border-box",
-          }}
-        >
+        <div className="compare-section">
           <h3>Compare with Another Holiday</h3>
           <select
-            className="form-select mb-3"
-            style={{
-              width: "90%",
-              boxSizing: "border-box",
-              padding: "8px 12px",
-              border: "1px solid #ccc",
-              borderRadius: "6px",
-              fontSize: "1rem",
-            }}
+            className="form-select"
             value={comparePlanId}
             onChange={(e) => setComparePlanId(e.target.value)}
           >
@@ -354,51 +274,39 @@ export default function TravelPlanDetails() {
               ))}
           </select>
 
-          <div
-            style={{
-              overflowX: "auto",
-              width: "90%",
-              boxSizing: "border-box",
-              flex: "1",
-              marginTop: "20px",
-            }}
-          >
-            {comparePlanId ? (
-              <table
-                className="form-table"
-                style={{
-                  fontSize: "0.85rem",
-                  width: "100%",
-                  tableLayout: "fixed",
-                  wordWrap: "break-word",
-                }}
-              >
-                <thead>
-                  <tr>
-                    <th>Category</th>
-                    <th>{comparePlanName} (€)</th>
-                    <th>{plan.name} (€)</th>
+          {comparePlanId && (
+            <table className="form-table compare-table">
+              <thead>
+                <tr>
+                  <th>Category</th>
+                  <th>{comparePlanName} (€)</th>
+                  <th>{plan.name} (€)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {allCategories.map((cat) => (
+                  <tr key={cat}>
+                    <td data-label="Category">{cat}</td>
+                    <td data-label={`${comparePlanName} (€)`}>
+                      {compareTotals[cat]?.toFixed(2) || "0.00"}
+                    </td>
+                    <td data-label={`${plan.name} (€)`}>
+                      {categoryTotals[cat]?.toFixed(2) || "0.00"}
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {allCategories.map((cat) => (
-                    <tr key={cat}>
-                      <td>{cat}</td>
-                      <td>{compareTotals[cat]?.toFixed(2) || "0.00"}</td>
-                      <td>{categoryTotals[cat]?.toFixed(2) || "0.00"}</td>
-                    </tr>
-                  ))}
-                  <tr style={{ fontWeight: "bold" }}>
-                    <td>Total</td>
-                    <td>{compareTotal.toFixed(2)}</td>
-                    <td>{totalBudget.toFixed(2)}</td>
-                  </tr>
-                </tbody>
-              </table>
-            ) : (
-              <div style={{ flex: "1" }}></div>
-            )}
-          </div>
+                ))}
+                <tr className="bold">
+                  <td data-label="Category">Total</td>
+                  <td data-label={`${comparePlanName} (€)`}>
+                    {compareTotal.toFixed(2)}
+                  </td>
+                  <td data-label={`${plan.name} (€)`}>
+                    {totalBudget.toFixed(2)}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          )}
         </div>
       </div>
 

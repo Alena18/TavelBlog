@@ -75,23 +75,9 @@ function Home() {
           )}
         </div>
 
-        <div className="home-button">
-          <button
-            onClick={startCar}
-            className="button-text"
-            style={{
-              outline: "none",
-              boxShadow: "none",
-              textDecoration: "none",
-            }}
-          >
-            Start{" "}
-            <span
-              className="palm"
-              style={{ fontSize: "1.2em", marginLeft: "5px" }}
-            >
-              🧳
-            </span>
+        <div className="home-button narrow-button-bg">
+          <button onClick={startCar} className="button-text" id="start-button">
+            Start <span className="baggage">🧳</span>
           </button>
         </div>
       </div>

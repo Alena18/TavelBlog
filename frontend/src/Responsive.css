@@ -1,0 +1,313 @@
+/* ─────────────────────────────
+   Global: Desktop Only
+   ───────────────────────────── */
+.nav-toggle {
+  display: none; /* hidden above 1200px */
+}
+
+/* ─────────────────────────────
+   Mobile styles: ≤ 1200px
+   ───────────────────────────── */
+@media (max-width: 1200px) {
+
+  /* Typography + Layout Adjustments */
+  h1, h2 {
+    font-size: 2rem;
+    margin: 10px;
+    text-align: center;
+  }
+
+  h3 {
+    font-size: 1.2rem;
+  }
+
+  .palm {
+    font-size: 3rem;
+    margin: 15px;
+  }
+
+  .home-button-wrapper {
+    gap: 1.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .home-button {
+    transform: scale(0.6);
+  }
+
+  .home-button > * {
+    font-size: 1.1rem;
+    padding: 0.3rem 1rem;
+    min-width: 80px;
+  }
+
+  .narrow-button-bg {
+    padding: 8px 0;
+    display: flex;
+    justify-content: center;
+  }
+
+  #start-button,
+  #signout-button {
+    padding: 0.5rem 0.8rem;
+    min-width: 60px;
+  }
+
+  /* Navbar Layout */
+
+  .navbar {
+    display: block;
+    background: none !important;
+    box-shadow: none !important;
+  }
+
+  .nav-wrapper {
+    position: fixed;
+    top: 5%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.33);
+    z-index: 2000;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 16px;
+    border-radius: 24px;
+    background: linear-gradient(to right, #9358d1, #4e54c8, #00b4db);
+  }
+
+  .nav-toggle {
+    background: white;
+    border-radius: 10px;
+    padding: 1.2rem 2.5rem;
+    font-family: "Niconne", cursive;
+    font-size: 2.5rem;
+    color: #9358d1;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    line-height: 1;
+    box-shadow: none;
+  }
+
+  .nav-toggle:focus,
+  .nav-toggle:focus-visible {
+    outline: none;
+    box-shadow: none;
+  }
+
+  /* Dropdown Menu*/
+
+  .nav-links {
+  display: none !important;
+  position: fixed; /* ← change from absolute to fixed */
+  top: 45px;       /* some padding from the top */
+  left: 50%;
+  transform: translateX(-50%);
+  flex-direction: column;
+  align-items: flex-start;
+  background: white;
+  padding: 1rem 1.2rem;
+  border: 2px solid #9358d1;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1500;
+  width: max-content;
+  min-width: 200px;
+  max-width: 90vw;
+  gap: 0;
+}
+
+
+  .nav-links.open {
+    display: flex !important;
+  }
+
+  .nav-links a,
+  .nav-links span,
+  .nav-links .profile-icon {
+    font-size: 1rem;
+    padding: 0.4rem 0;
+    margin: 0;
+    text-align: left;
+    color: #9358d1 !important;
+    width: 100%;
+    display: block;
+    text-decoration: none;
+  }
+
+  .nav-links a::after,
+  .nav-links a::before {
+    display: none;
+  }
+
+  /* Fix for Games <div> and span */
+  .nav-links > div {
+    width: 100%;
+    text-align: left !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+ .games-dropdown-wrapper {
+  color: #9358d1;
+ }
+  .nav-links > div > span {
+    display: block;
+    width: 100%;
+    padding: 0.4rem 0;
+    font-size: 1rem;
+    color: #9358d1 !important;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  /* Profile icon cleanup */
+  .nav-links .profile-icon {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
+
+  .profile-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    color: #9358d1 !important;
+    padding: 0.4rem 0;
+    font-size: 0.9rem;
+    margin-top: 4px;
+  }
+
+  .profile-icon svg {
+    color: #9358d1 !important;
+  }
+
+  /* Responsive Table */
+
+.form-table {
+    width: 80%;
+    
+  }
+
+  .form-table thead {
+    display: none;
+  }
+
+  .form-table tbody tr {
+    display: block;
+    margin-bottom: 20px;
+    background: white;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    border-radius: 10px;
+    padding: 10px;
+  }
+
+  .form-table td {
+    display: block;
+    text-align: left;
+    padding: 8px 10px;
+    position: relative;
+    border: none !important;
+  }
+
+  .form-table td::before {
+    content: attr(data-label);
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+    color: #5400b0;
+    font-size: 0.95rem;
+  }
+
+  .form-table td .action-buttons {
+    justify-content: flex-start;
+  }
+
+
+.form-table tbody {
+    width: 80vw;
+    margin: 0 auto;
+    display: table-row-group; /* restore default if changed for mobile */
+  }
+
+  /* Budget */
+  .action-buttons button{
+    margin-left: 5px;
+  }
+  }
+
+/* Log */
+@media (max-width: 1199px) and (min-width: 851px) {
+  .cards-container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 850px) {
+  .cards-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Budget */
+
+@media (max-width: 750px) {
+.receipt-form {
+    display: flex !important; /* FORCE override */
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .receipt-form input,
+  .receipt-form select {
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #a855f7;
+  border-radius: 8px;
+  background-color: #fff;
+  color: #333;
+  width: 100%;
+  max-width: 90%;
+  box-sizing: border-box;
+}
+
+.receipt-form select {
+  color: #717171;; /* Match the placeholder */
+  font-size: 1rem;
+}
+
+  .action-buttons button{
+    margin-left: 5px;
+  }
+}
+
+
+@media (max-width: 600px) {
+  .form-wrapper-logs,
+  .add-form,
+  .search-container,
+  h2 {
+    margin: 0 auto;
+    max-width: 90%;
+    text-align: center;
+    padding: 0 10px;
+    justify-content: center;
+  }
+
+  .add-form {
+    grid-template-columns: 1fr;
+    padding: 20px;
+  }
+
+  .search-input {
+    width: 90% !important; /* override if needed */
+  }
+}
+

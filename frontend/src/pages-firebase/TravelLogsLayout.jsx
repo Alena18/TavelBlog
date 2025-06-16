@@ -4,6 +4,8 @@ import { FiSearch } from "react-icons/fi";
 import { TravelLogModal } from "../hooks-firebase/useProfileModal";
 import PlaceModal from "../hooks-firebase/PlaceModal";
 
+import "./style-firebase.css";
+
 export default function TravelLogsLayout({
   logs,
   newLog,
@@ -56,7 +58,7 @@ export default function TravelLogsLayout({
             onChange={handleNewChange}
             placeholder="Title"
             required
-            style={{ gridColumn: "1 / -1" }}
+            className="grid-span-full"
           />
 
           <textarea
@@ -65,7 +67,7 @@ export default function TravelLogsLayout({
             onChange={handleNewChange}
             placeholder="Description"
             required
-            style={{ gridColumn: "1 / -1" }}
+            className="grid-span-full"
           />
 
           <input
@@ -89,25 +91,13 @@ export default function TravelLogsLayout({
             value={newLog.tags}
             onChange={handleNewChange}
             placeholder="Tags (comma separated)"
-            style={{ gridColumn: "1 / -1" }}
+            className="grid-span-full"
           />
 
-          <div
-            className="button-group"
-            style={{
-              gridColumn: "1 / -1",
-              justifySelf: "center",
-              width: "200px",
-            }}
-          >
+          <div className="button-group center-button">
             <button type="submit">
               Add Log
-              <span
-                className="palm"
-                style={{ fontSize: "1.2em", marginLeft: "5px" }}
-              >
-                🧳
-              </span>
+              <span className="palm-icon">🧳</span>
             </button>
           </div>
         </form>

@@ -100,15 +100,15 @@ function BudgetComparison({ planAId }) {
         <tbody>
           {Object.entries(totals).map(([category, amount], idx) => (
             <tr key={idx}>
-              <td>{category}</td>
-              <td>€{amount}</td>
+              <td data-label="Category">{category}</td>
+              <td data-label="Amount (€)">€{amount}</td>
             </tr>
           ))}
           <tr>
-            <td>
+            <td data-label="Category">
               <strong>Total</strong>
             </td>
-            <td>
+            <td data-label="Amount (€)">
               <strong>€{totalAmount}</strong>
             </td>
           </tr>

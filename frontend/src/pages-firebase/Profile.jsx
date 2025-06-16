@@ -122,15 +122,15 @@ function Profile() {
                     className="clickable-row"
                     onClick={() => handlePlanRowClick(plan.id)}
                   >
-                    <td>{plan.name}</td>
-                    <td>
+                    <td data-label="Name">{plan.name}</td>
+                    <td data-label="Locations">
                       {Array.isArray(plan.locations)
                         ? plan.locations.join(", ")
                         : plan.locations}
                     </td>
-                    <td>{formatDateDMY(plan.startDate)}</td>
-                    <td>{formatDateDMY(plan.endDate)}</td>
-                    <td>
+                    <td data-label="Start">{formatDateDMY(plan.startDate)}</td>
+                    <td data-label="End">{formatDateDMY(plan.endDate)}</td>
+                    <td data-label="Activities">
                       {Array.isArray(plan.activities) &&
                         plan.activities
                           .map((activity) => {
@@ -141,8 +141,8 @@ function Profile() {
                           })
                           .join(" ")}
                     </td>
-                    <td>{plan.description}</td>
-                    <td>
+                    <td data-label="Description">{plan.description}</td>
+                    <td data-label="Budget Total">
                       €{plan.totalBudget ? plan.totalBudget.toFixed(2) : "0.00"}
                     </td>
                     <td>
@@ -169,16 +169,25 @@ function Profile() {
                 ))
               : filteredLogs.map((log) => (
                   <tr key={log.id}>
-                    <td onClick={() => openLogModal(log)}>{log.title}</td>
-                    <td onClick={() => openLogModal(log)}>{log.description}</td>
-                    <td onClick={() => openLogModal(log)}>
+                    <td data-label="Title" onClick={() => openLogModal(log)}>
+                      {log.title}
+                    </td>
+                    <td
+                      data-label="Description"
+                      onClick={() => openLogModal(log)}
+                    >
+                      {log.description}
+                    </td>
+                    <td data-label="Start" onClick={() => openLogModal(log)}>
                       {formatDateDMY(log.startDate)}
                     </td>
-                    <td onClick={() => openLogModal(log)}>
+                    <td data-label="End" onClick={() => openLogModal(log)}>
                       {formatDateDMY(log.endDate)}
                     </td>
-                    <td onClick={() => openLogModal(log)}>{log.tags}</td>
-                    <td onClick={() => openLogModal(log)}>
+                    <td data-label="Tags" onClick={() => openLogModal(log)}>
+                      {log.tags}
+                    </td>
+                    <td data-label="Posted" onClick={() => openLogModal(log)}>
                       {formatDateDMY(log.postDate)}
                     </td>
                     <td>
