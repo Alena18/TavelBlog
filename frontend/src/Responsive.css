@@ -239,6 +239,11 @@
   .action-buttons button{
     margin-left: 5px;
   }
+ /* Login */
+   .login-form {
+    transform: scale(0.5); /* make it 50% smaller */
+    transform-origin: top center;
+  }
   }
 
 /* Log */
